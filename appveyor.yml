@@ -1,0 +1,52 @@
+version: 1.0.{build}
+
+shallow_clone: true
+
+environment:
+  matrix:
+    # 1
+    # easyRNG
+    # no gui
+    - compiler: msvc_msys2
+      ARCH: x64
+      MSYS2_ARCH: x86_64
+      MSYS2_DIR: msys64
+      MSYSTEM: MINGW64
+    # 2
+    # easyRNG
+    # no gui
+    #- compiler: msvc_msys2
+    #  ARCH: x86
+    #  MSYS2_ARCH: i686
+    #  MSYS2_DIR: msys64
+    #  MSYSTEM: MINGW32
+
+before_build:
+    - set PATH=C:\%MSYS2_DIR%\%MSYSTEM%\bin;C:\%MSYS2_DIR%\usr\bin;%PATH%
+    - bash -lc "for i in {1..3}; do pacman -Syyuu --noconfirm && break || sleep 15; done"
+    - bash -lc "for i in {1..3}; do pacman -Suu --noconfirm && break || sleep 15; done"
+    - bash -lc "for i in {1..3}; do pacman --noconfirm -Su mingw-w64-%MSYS2_ARCH%-{gcc,libtool,curl,gcc-fortran,libxslt,glib2} automake autoconf make wget tar && break || sleep 15; done"
+    - bash -lc "cd \"$APPVEYOR_BUILD_FOLDER\" && exec ./appveyor-before-build.sh"
+
+build_script:
+    - bash -lc "cd \"$APPVEYOR_BUILD_FOLDER\" && exec ./appveyor-build-script.sh"
+
+branches:
+  only:
+    - master
+
+artifacts:
+  - path: .libs\*.dll
+    name: dll
+
+deploy:
+  provider: S3
+  access_key_id:
+    secure: BxnXPTzYGoSe3q5D5k1BivFjTvskiM4mUC52CQuGoB4=
+  secret_access_key:
+    secure: yzBbtFYpQm/xot3RF30rskZf8C8UAsQMgN4IxWz1BEbct23Youi9AwF121vTQacb
+  bucket: xmimsim-detector-response-ap3
+  region: us-east-1
+  set_public: true
+  #folder:
+  artifact: dll
