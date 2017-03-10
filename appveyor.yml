@@ -31,12 +31,16 @@ before_build:
 build_script:
     - bash -lc "cd \"$APPVEYOR_BUILD_FOLDER\" && exec ./appveyor-build-script.sh"
 
+after_build:
+    - cd %APPVEYOR_BUILD_FOLDER%
+    - 7z a xmimsim-detector-response-ap3-win-%MSYS2_ARCH%.zip *.dll
+
 branches:
   only:
     - master
 
 artifacts:
-  - path: .libs\*.dll
+  - path: xmimsim-detector-response-ap3-win-%MSYS2_ARCH%.zip
     name: dll
 
 deploy:

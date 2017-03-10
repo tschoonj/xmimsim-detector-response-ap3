@@ -14,3 +14,4 @@ export CXXFLAGS="-Wno-deprecated -Wno-deprecated-declarations"
 make
 make check
 make distcheck
+mv .libs/*.dll .
