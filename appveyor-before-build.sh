@@ -45,8 +45,10 @@ make install
 cd ..
 
 # install xmi-msim from master
-git clone --depth 1 git@github.com:tschoonj/xmimsim.git
-cd xmimsim
+#git clone --depth 1 git@github.com:tschoonj/xmimsim.git
+wget -q https://github.com/tschoonj/xmimsim/archive/master.tar.gz
+tar xfz master.tar.gz
+cd xmimsim-master
 autoreconf -fi
 export CPPFLAGS=-I/usr/local/include
 export CFLAGS="-Wno-deprecated -Wno-deprecated-declarations"
